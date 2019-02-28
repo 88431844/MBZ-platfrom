@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="TxtAnnotationsMapper">
+	
+	<!--表名 -->
+	<sql id="tableName">
+		data_annotations_txt
+	</sql>
+	
+	<!-- 字段 -->
+	<sql id="Field">
+		TXTID,	
+		TXTDATE,	
+		TXTTITLE,
+		txtContent,	
+		TXTFILEPATH,
+		relevance,
+		relevanceContent,
+		resultTitle,
+		resultContent,	
+		RESULTFILEPATH,	
+		TYPE,	
+		isLock,
+		STATUS,	
+		checkStatus,
+		userId,
+		userName,
+		checkUserId,
+		checkUserName,
+		creatTime,
+		updateTime,
+		editTime,
+		TXTANNOTATIONS_ID
+	</sql>
+	
+	<!-- 字段值 -->
+	<sql id="FieldValue">
+		#{TXTID},	
+		#{TXTDATE},	
+		#{TXTTITLE},
+		#{txtContent},	
+		#{TXTFILEPATH},	
+		#{relevance},
+		#{relevanceContent},
+		#{resultTitle},
+		#{resultContent},
+		#{RESULTFILEPATH},	
+		#{TYPE},	
+		#{isLock},
+		#{STATUS},
+		#{checkStatus},	
+		#{userId},
+		#{userName},
+		#{checkUserId},
+		#{checkUserName},
+		#{creatTime},
+		#{updateTime},
+		#{editTime},
+		#{TXTANNOTATIONS_ID}
+	</sql>
+	
+	<!-- 新增-->
+	<insert id="save" parameterType="pd">
+		insert into 
+	<include refid="tableName"></include>
+		(
+	<include refid="Field"></include>
+		) values (
+	<include refid="FieldValue"></include>
+		)
+	</insert>
+	
+	<!-- 删除-->
+	<delete id="delete" parameterType="pd">
+		delete from
+		<include refid="tableName"></include>
+		where 
+			TXTANNOTATIONS_ID = #{TXTANNOTATIONS_ID}
+	</delete>
+	
+	<!-- 修改 -->
+	<update id="edit" parameterType="pd">
+		update
+		<include refid="tableName"></include>
+		set 
+			TXTID = #{TXTID},
+			TXTDATE = #{TXTDATE},
+			TXTTITLE = #{TXTTITLE},
+			TXTFILEPATH = #{TXTFILEPATH},
+			RESULTFILEPATH = #{RESULTFILEPATH},
+			TYPE = #{TYPE},
+			STATUS = #{STATUS},
+		TXTANNOTATIONS_ID = TXTANNOTATIONS_ID
+		where 
+		TXTANNOTATIONS_ID = #{TXTANNOTATIONS_ID}
+	</update>
+	
+	<!-- 通过ID获取数据 -->
+	<select id="findById" parameterType="pd" resultType="pd">
+		select 
+		<include refid="Field"></include>
+		from 
+		<include refid="tableName"></include>
+		where 
+			TXTANNOTATIONS_ID = #{TXTANNOTATIONS_ID}
+	</select>
+	
+	<!-- 列表 -->
+	<select id="datalistPage" parameterType="page" resultType="pd">
+		select
+		<include refid="Field"></include>
+		from 
+		<include refid="tableName"></include>
+		where 1=1
+		<if test="pd.keywords!= null and pd.keywords != ''"><!-- 关键词检索 -->
+			and
+				(userName LIKE CONCAT(CONCAT('%', #{pd.keywords}),'%')
+				
+				or txtId LIKE CONCAT(CONCAT('%', #{pd.keywords}),'%')
+				<!--	根据需求自己加检索条件
+					字段1 LIKE CONCAT(CONCAT('%', #{pd.keywords}),'%')
+					 or 
+					字段2 LIKE CONCAT(CONCAT('%', #{pd.keywords}),'%') 
+				-->
+				)
+		</if>
+		<if test="pd.selectIsLock != null and pd.selectIsLock != ''">
+			and isLock = #{pd.selectIsLock}
+		</if>
+		ORDER BY  updateTime DESC, TXTID DESC
+	</select>
+	
+	<!-- 列表(全部) -->
+	<select id="listAll" parameterType="pd" resultType="pd">
+		select
+		<include refid="Field"></include>
+		from 
+		<include refid="tableName"></include>
+	</select>
+	
+	<!-- 批量删除 -->
+	<delete id="deleteAll" parameterType="String">
+		delete from
+		<include refid="tableName"></include>
+		where 
+			TXTANNOTATIONS_ID in
+		<foreach item="item" index="index" collection="array" open="(" separator="," close=")">
+                 #{item}
+		</foreach>
+	</delete>
+	
+	<!-- 根据ID修改文章是否有效状态 -->
+	<update id="updateTxtStatus" parameterType="pd">
+		update
+		<include refid="tableName"></include>
+		set 
+			userId = #{userId},
+			STATUS = #{status},
+			userName = #{userName},
+			updateTime = CURRENT_TIMESTAMP
+		where 
+		TXTANNOTATIONS_ID = #{id}
+	</update>
+	
+	<!-- 根据ID修改文章是否审核状态 -->
+	<update id="updateTxtCheckStatus" parameterType="pd">
+		update
+		<include refid="tableName"></include>
+		set 
+			checkUserId = #{checkUserId},
+			checkStatus = #{checkStatus},
+			checkUserName = #{checkUserName},
+			updateTime = CURRENT_TIMESTAMP
+		where 
+		TXTANNOTATIONS_ID = #{id}
+	</update>
+	
+	<!-- 根据文字ID修改文章内容 -->
+	<update id="updateResultContent" parameterType="pd">
+		update
+		<include refid="tableName"></include>
+		set 
+			isLock = #{isLock},
+			resultContent = #{resultContent},
+			resultTitle=#{resultTitle},
+			updateTime = CURRENT_TIMESTAMP
+		where 
+		TXTANNOTATIONS_ID = #{id}
+	</update>
+	
+		<!-- 根据文字ID修改时间 -->
+	<update id="updateEditTime" parameterType="pd">
+		update
+		<include refid="tableName"></include>
+		set 
+			editTime = #{editTime}
+		where 
+		TXTANNOTATIONS_ID = #{id}
+	</update>
+	
+	<!-- 根据文章ID上锁(标注) -->
+	<update id="updateLock" parameterType="pd">
+		update
+		<include refid="tableName"></include>
+		set 
+			isLock = #{isLock},
+			userId = #{userId},
+			userName = #{userName},
+			updateTime = CURRENT_TIMESTAMP
+		where 
+		TXTANNOTATIONS_ID = #{id}
+	</update>
+	
+	<!-- 根据文章ID上锁(审核) -->
+	<update id="updateCheckLock" parameterType="pd">
+		update
+		<include refid="tableName"></include>
+		set 
+			isLock = #{isLock},
+			checkUserId = #{checkUserId},
+			checkUserName = #{checkUserName},
+			updateTime = CURRENT_TIMESTAMP
+		where 
+		TXTANNOTATIONS_ID = #{id}
+	</update>
+	
+	<select id="getOverNumToday" parameterType="pd" resultType="int">
+		SELECT COUNT(txtAnnotations_id) 
+		FROM data_annotations_txt 
+		WHERE DATE_FORMAT(updateTime,'%Y-%m-%d') = CURRENT_DATE
+		<if test="userId != null and userId != ''">
+			and userId = #{userId} 
+		</if>
+		<if test=" checkUserId != null and checkUserId != ''">
+			and checkUserId = #{checkUserId} 
+		</if>
+	</select>
+	
+	<!-- 获取未标注数据总量 -->
+	<select id="getUnmarkedNum" resultType="int">
+		SELECT COUNT(txtAnnotations_id) 
+		FROM data_annotations_txt 
+		WHERE STATUS = 1 AND isLock = 0
+	</select>
+	
+	<!-- 获取未审核数据总量 -->
+	<select id="getUncheckedNum" resultType="int">
+		SELECT COUNT(txtAnnotations_id) 
+		FROM data_annotations_txt 
+		WHERE STATUS = 1 AND checkStatus = 0
+	</select>
+	
+	<update id="updateByXml" parameterType="pd">
+		UPDATE data_annotations_txt 
+		SET 
+		<if test="resultTile != null and resultTile != ''">
+			resultTile= #{resultTile},
+		</if>
+		<if test="resultContent != null and resultContent != ''">
+			resultContent= #{resultContent}
+		</if>
+		WHERE txtId = #{txtId}
+	</update>
+</mapper>

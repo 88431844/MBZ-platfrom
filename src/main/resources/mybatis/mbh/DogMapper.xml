@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="DogMapper">
+	
+	<!--表名 -->
+	<sql id="tableName">
+		dao_face_attribute
+	</sql>
+	
+	<!-- 字段 -->
+	<sql id="Field">
+		fileName,
+		age,
+		sex,
+		head,
+		face,
+		hair,
+		definition,
+		updateCount,
+		status,
+		user,
+		createTime,
+		updateTime
+	</sql>
+	
+	<!-- 字段值 -->
+	<sql id="FieldValue">
+		#{fileName},
+		#{age},
+		#{sex},
+		#{head},
+		#{face},
+		#{hair},
+		#{definition},
+		#{updateCount},
+		#{status},
+		#{user},
+		#{createTime},
+		#{updateTime}
+	</sql>
+	
+	<!-- 写入数据 -->
+	<insert id="saveTxtValue" parameterType="pd">
+		insert into <include refid="tableName"></include> (
+			fileName,age,sex,head,face,hair,definition,updateCount,status,user,createTime,updateTime
+		) values (
+			#{fileName},#{age},#{sex},#{head},#{face},#{hair},#{definition},#{updateCount},#{status},#{user},#{createTime},#{updateTime}
+		)
+	</insert>
+	
+	<!-- 删除用户 -->
+	<delete id="deleteU" parameterType="pd">
+
+	</delete>
+	
+	<!-- 修改 -->
+	<update id="editU" parameterType="pd">
+
+	</update>
+	
+</mapper>

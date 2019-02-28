@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="MBZ-platfrom:war">
+    <output-path>$PROJECT_DIR$/target</output-path>
+    <root id="archive" name="MVNFHM.war">
+      <element id="artifact" artifact-name="MBZ-platfrom:war exploded" />
+    </root>
+  </artifact>
+</component>
